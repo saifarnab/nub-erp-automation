@@ -77,8 +77,9 @@ class NUB:
         time.sleep(1)
         driver.find_element(By.ID, "loadStudents").click()
 
-    def marks_entry(self, driver, data):
-        wait = WebDriverWait(driver, 15)
+    @staticmethod
+    def marks_entry(driver, data):
+        wait = WebDriverWait(driver, 5)
 
         # Initial page load
         wait.until(
@@ -112,15 +113,19 @@ class NUB:
                 )
 
                 # Find the student's row AGAIN
-                row = wait.until(
-                    EC.presence_of_element_located(
-                        (
-                            By.XPATH,
-                            f"//div[contains(@class,'marks-details')]"
-                            f"//tbody/tr[td[normalize-space()='{student_id}']]"
+                try:
+                    row = wait.until(
+                        EC.presence_of_element_located(
+                            (
+                                By.XPATH,
+                                f"//div[contains(@class,'marks-details')]"
+                                f"//tbody/tr[td[normalize-space()='{student_id}']]"
+                            )
                         )
                     )
-                )
+                except TimeoutException:
+                    print(f"Not Found: {student_id}")
+                    continue
 
                 # Find the input AGAIN
                 field = wait.until(
@@ -176,6 +181,7 @@ class NUB:
         )
 
         save_button.click()
+        time.sleep(4)
 
     def run(self):
         print('----------------- SCRIPT STARTS -------------------')
@@ -187,7 +193,7 @@ class NUB:
         self.section = 'CSE 1112 - B'
         data = [
             [42230100383, 10, 18, 24, 0],
-            [42250202570, 1, -7, -7, 0],
+            [42250202570, 1, 0, -7, 0],
             [42250302942, 10, 14, 7, 0],
             [42250302997, 10, 19, 17, 0],
             [42260103109, 5, 7, 23, 0],
@@ -196,14 +202,14 @@ class NUB:
             [42260103123, 10, 13, 5, 0],
             [42260103126, 4, 7, 16, 0],
             [42260103127, 10, 19, 10, 0],
-            [42260103128, 3, -7, 5, 0],
+            [42260103128, 3, 0, 5, 0],
             [42260103129, 10, 16, 10, 0],
             [42260103131, 8, 12, 8, 0],
             [42260103133, 10, 16, 25, 0],
             [42260103134, 10, 11, 28, 0],
             [42260103135, 7, 9, 9, 0],
             [42260103136, 10, 20, 28, 0],
-            [42260103137, 2, -7, -7, 0],
+            [42260103137, 2, 0, -7, 0],
             [42260103138, 10, 16, 20, 0],
             [42260103139, 10, 14, 17, 0],
             [42260103140, 7, 14, 6, 0],
@@ -214,7 +220,7 @@ class NUB:
             [42260103146, 10, 15, 10, 0],
             [42260103147, 10, 15, 12, 0],
             [42260103150, 10, 20, 27, 0],
-            [42260103151, 3, -7, 2, 0],
+            [42260103151, 3, 0, 2, 0],
             [42260103153, 10, 12, 9, 0],
             [42260103155, 9, 19, 30, 0],
             [42260103156, 8, 15, 26, 0],
@@ -226,7 +232,6 @@ class NUB:
         self.login(driver)
         self.select_semester_section(driver)
         self.marks_entry(driver, data)
-        time.sleep(111)
 
         print('----------------- SCRIPT ENDS -------------------')
 
